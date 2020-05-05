@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta name='keywords' content='Virtual Love Meter'>
+<meta name="description" content="Virtual Love Meter">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta property="og:title" content="Virtual Love Meter" />
+<meta property="og:description" content="Virtual version of the vintage Love Meter penny arcade game." />
+<meta property="og:image" content="lovemeter.jpg" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://Bedno.com/lovemeter" />
+<meta property="og:site_name" content="VirtualLoveMeter" />
+<meta http-equiv="cache-control" content="max-age=0" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="expires" content="0" />
+<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+<meta http-equiv="pragma" content="no-cache" />
+<head>
+<title>Virtual Love Meter</title>
+</head>
+<script>
+
+var ResizeTimer = null;
+var WinWidPhys, WinHgtPhys;
+
+var SpinIdx = 0;  var SpinLp = 0;  var SpinCnt = 0;  var SpinStart = 0;
+var SpinTimer = null;
+var LiteRow = 0;  var LiteCol = 0;
+var TopLite = 0;  var TopTimer = null;  var TopRow = 285;
+var LiteRows = new Array(314, 368, 423, 480, 535, 591);
+var HelpTop=666; var HelpRight=312; var HelpBottom=715; var HelpLeft=97;
+var LiteCols = new Array(105, 391);
+var LiteWid = 196;  var LiteHgt = 50;
+var LiteNames = new Array( "BASHFUL", "SHY", "MODEST", "INDIFFERENT", "COLD", "HARMLESS", "UNCONTROLLABLE", "FURIOUS", "FLIRTATIOUS", "LOVABLE", "JEALOUS", "CAREFUL");
+var MachineWid = 0;  var MachineHgt = 0;  var MachineRat = 1;  var MachineResize = 1;
+var MachineMaxWid = 0;  var MachineMaxHgt = 0;
+var MachineOrigWid = 0;  var MachineOrigHgt = 0;
+
+var SpinSound = null;  var SpinSounding = -1;
+try {
+  SpinSound = new Audio('lovemeter.ogg');
+  // SpinSound.loop = true;
+  SpinSound.preload = "auto";
+  SpinSounding = 0;
+} catch (err) { }
+
+function TopOff () {
+  document.getElementById('SpinImg'+((SpinIdx+1).toString())).style.visibility='hidden';
+  document.getElementById('TopLite').style.visibility='hidden';
+  // try { if (SpinSounding==1) { SpinSound.pause(); SpinSounding=0; } } catch(err) { }
+}
+
+function SpinRender () {
+  document.getElementById('SpinImg'+((SpinIdx+1).toString())).style.visibility='visible';
+  for (SpinLp=1; SpinLp<=LiteNames.length; SpinLp++) {
+    if ( (SpinIdx+1) != SpinLp ) {
+      document.getElementById('SpinImg'+SpinLp.toString()).style.visibility='hidden';
+    }
+  }
+}
+function SpinMoveDo () {  // Adjust the selection window cursor.
+  SpinIdx = (SpinIdx+1) % LiteNames.length;
+  if (SpinIdx < 0) { SpinIdx += LiteNames.length; }
+  SpinRender();
+}
+function SpinDo () {  // Handle a spin increment, gradually slowing.
+  SpinMoveDo(1);
+  SpinCnt--;
+  // if ( (SpinCnt==0) && (SpinStart==SpinIdx) ) { SpinCnt++; }  // Prevent full spin around to same
+  if (SpinCnt>0) {
+    SpinTimer = setTimeout('SpinDo()',Math.round((0.0065*1000)*(SpinSet-SpinCnt)));
+    if (TopTimer!=null) { clearTimeout(TopTimer); TopTimer=null; }
+    document.getElementById('TopLite').style.visibility='visible';
+  } else {
+    TopTimer = setTimeout('TopOff()',4200);
+  }
+}
+function Spin () {  // Main spin function.
+  if (SpinTimer!=null) { clearTimeout(SpinTimer); SpinTimer=null; }
+  document.getElementById('TopLite').style.visibility='visible';
+  SpinStart = SpinIdx;
+  SpinSet = Math.floor((LiteNames.length*3) + (Math.random()*LiteNames.length));
+  SpinCnt = SpinSet;
+  SpinDo();
+  try {
+    if (SpinSounding==1) { SpinSound.pause(); SpinSounding=0; }
+    if (SpinSounding==0) { SpinSound.play(); SpinSounding=1; }
+  } catch(err) { }
+}
+
+</script>
+<body onLoad="DoStartup();" style="margin-top:0px; margin-left:0px; margin-bottom:0px; margin-right:0px; overflow:hidden;"  onClick="Spin();" onKeydown="Spin();" bgColor='#FFFFFF'><font face="Arial" size=2>
+<div id="DivWhole" style="z-index:0; position:absolute; left:0px; top:0px; width:98%; height:98%; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="TopLite" style="z-index:0; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg1" style="z-index:1; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg2" style="z-index:2; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg3" style="z-index:3; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg4" style="z-index:4; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg5" style="z-index:5; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg6" style="z-index:6; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg7" style="z-index:7; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg8" style="z-index:8; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg9" style="z-index:9; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg10" style="z-index:10; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg11" style="z-index:11; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img src="lovemeter-lit.jpg" id="SpinImg12" style="z-index:12; position:absolute; left:0px; top:0px; visibility:hidden; overflow:hidden;">
+<img id="MachineImage" src="lovemeter.jpg" border=0 onClick="Spin();" style="visibility:hidden">
+</div>
+<div id="HelpDiv" style="z-index:0; position:absolute; left:0px; top:0px;" onClick="window.open('https://bedno.com/see/art/20200504');" title="[More...]"></div>
+
+<script>
+function DoResize () {
+  WinWidPhys = window.innerWidth && document.documentElement.clientWidth ? Math.min(window.innerWidth, document.documentElement.clientWidth) : window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+  WinHgtPhys = window.innerHeight && document.documentElement.clientHeight ? Math.min(window.innerHeight, document.documentElement.clientHeight) : window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+  MachineMaxHgt = Math.floor(WinHgtPhys*.98);
+  MachineMaxWid = Math.floor(WinWidPhys*.98);
+  MachineOrigWid = document.getElementById('MachineImage').naturalWidth;
+  MachineOrigHgt = document.getElementById('MachineImage').naturalHeight;
+  if ( (MachineOrigWid>100) && (MachineOrigHgt>0) ) {
+    MachineRat = MachineOrigHgt / MachineOrigWid;
+    MachineHgt = MachineMaxHgt;
+    MachineWid = Math.floor(MachineMaxHgt / MachineRat);
+    if (MachineWid>MachineMaxWid) {
+      MachineWid = MachineMaxWid;
+      MachineHgt = Math.floor(MachineMaxWid * MachineRat);
+    }
+    MachineResize = MachineWid / MachineOrigWid;
+    document.getElementById('MachineImage').width = MachineWid;
+    document.getElementById('MachineImage').height = MachineHgt;
+    document.getElementById('MachineImage').style.visibility='visible';
+  } else {
+    alert("Sorry, couldn't setup right.");
+  }
+}
+
+function SpinClear () {
+  for (SpinLp=1; SpinLp<=LiteNames.length; SpinLp++) {
+    document.getElementById('SpinImg'+SpinLp.toString()).style.visibility='hidden';
+  }
+  SpinLp = 1;
+  for (LiteCol=0; LiteCol<LiteCols.length; LiteCol++) {
+    for (LiteRow=0; LiteRow<LiteRows.length; LiteRow++) {
+      document.getElementById('SpinImg'+SpinLp.toString()).height = MachineHgt;
+      document.getElementById('SpinImg'+SpinLp.toString()).width = MachineWid;
+      document.getElementById('SpinImg'+SpinLp.toString()).style.clip = "rect("+(Math.floor(MachineResize*LiteRows[LiteRow]).toString())+"px "+(Math.floor(MachineResize*(LiteCols[LiteCol]+LiteWid)).toString())+"px "+(Math.floor(MachineResize*(LiteRows[LiteRow]+LiteHgt)).toString())+"px "+(Math.floor(MachineResize*LiteCols[LiteCol]).toString())+"px)";
+      SpinLp++;
+    }
+  }
+  document.getElementById('TopLite').height = MachineHgt;
+  document.getElementById('TopLite').width = MachineWid;
+  document.getElementById('TopLite').style.clip = "rect(0px "+MachineWid.toString()+"px "+(Math.floor(MachineResize*TopRow)).toString()+"px 0px)";
+  document.getElementById('HelpDiv').style.top = Math.floor(MachineResize*HelpTop).toString()+"px";
+  document.getElementById('HelpDiv').style.left = Math.floor(MachineResize*HelpLeft).toString()+"px";
+  document.getElementById('HelpDiv').style.width = Math.floor(MachineResize*(HelpRight-HelpLeft)).toString()+"px";
+  document.getElementById('HelpDiv').style.height = Math.floor(MachineResize*(HelpBottom-HelpTop)).toString()+"px";
+}
+
+function DoStartup () {
+  window.onresize = function(event) {
+    if (ResizeTimer) { clearTimeout(ResizeTimer); }
+    ResizeTimer = setTimeout('DoStartup()',1200);
+  }
+  DoResize();
+  SpinClear();
+}
+</script>
+
+</font>
+</body>
+</html>
+
